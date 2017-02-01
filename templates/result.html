@@ -1,12 +1,12 @@
 <html>
     <head>
-        <title>Guess the Language!</title>
+        <title>Result ajax page</title>
     </head>
     <body>
         
             <p>
             {% for item in res_list %}
-                {{ item }} <br>
+                {{ item | safe}} <br>
             {% endfor %}
             </p>
        
