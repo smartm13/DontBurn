@@ -1,6 +1,8 @@
 # DontBurn
 helps you decide which side to sit while travelling to get minimal damage from sun!
 
+Deployed at : http://smartass.pythonanywhere.com/sun
+
 When paranoid people travel in bus they think "Which side should I sit so that I avoid sun light from bus roof"
 If you belong to such people...
 Congrats... You came at right place.
