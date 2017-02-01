@@ -1,9 +1,8 @@
 
 import googlemaps, math, ephem
-from pprint import pprint
+
 import datetime
-import pprint
-now = datetime.datetime.utcnow()
+#import pprint
 #sprint(now)
 
 gmaps = googlemaps.Client(key='AIzaSyDafKfrnMkZ2czKRX_p_AgEzjDzaW92LcA')
@@ -52,39 +51,38 @@ def whereissun(my,azm):
 			return 'left'
 
 
-def azimuthAngle(location):
-	lng1 = (str(int(location['lng'])))
-	lng2 = (str(int((location['lng']-int(location['lng']))*60)))
-	lng3 = (str(((location['lng']-int(location['lng']))*60 - int((location['lng']-int(location['lng']))*60))*60))
-	lng=lng1+':'+lng2+':'+lng3
-
-	lat1 = (str(int(location['lat'])))
-	lat2 = (str(int((location['lat']-int(location['lat']))*60)))
-	lat3 = (str(((location['lat']-int(location['lat']))*60 - int((location['lat']-int(location['lat']))*60))*60))
-	lat=lat1+':'+lat2+':'+lat3
-	o = ephem.Observer()
-	o.lon = lng
-	o.lat = lat
-	o.date = now.strftime("%Y/%m/%d %H:%M:%S")
-	sun = ephem.Sun(o)
-	sun.compute(o)
-	return(sun.az.norm)
+def azimuthAngle(location,secsAfterNow):
+    now = datetime.datetime.utcnow()
+    lng1 = (str(int(location['lng'])))
+    lng2 = (str(int((location['lng']-int(location['lng']))*60)))
+    lng3 = (str(((location['lng']-int(location['lng']))*60 - int((location['lng']-int(location['lng']))*60))*60))
+    lng=lng1+':'+lng2+':'+lng3
+    lat1 = (str(int(location['lat'])))
+    lat2 = (str(int((location['lat']-int(location['lat']))*60)))
+    lat3 = (str(((location['lat']-int(location['lat']))*60 - int((location['lat']-int(location['lat']))*60))*60))
+    lat=lat1+':'+lat2+':'+lat3
+    o = ephem.Observer()
+    o.lon = lng
+    o.lat = lat
+    timeobj=now + datetime.timedelta(seconds=secsAfterNow)
+    o.date = timeobj.strftime("%Y/%m/%d %H:%M:%S")
+    sun = ephem.Sun(o)
+    sun.compute(o)
+    return(sun.az.norm)
 
 def find_sun_pos(source,destination):
-	directions_result = gmaps.directions(source,destination, mode="driving",departure_time=datetime.datetime.now())
+	directions_result = gmaps.directions(source,destination, mode="driving")#,departure_time=datetime.datetime.now())
 	if directions_result==None:return 'not found'
-	steps=[]
-	data=[]
+	steps,data,trvTs=[],[],0
 	dist_left = dist_right = 0
-	pprint.pprint(directions_result[0]['legs'][0]['steps'])
 	for step in directions_result[0]['legs'][0]['steps']:
-			l = {'start' : step['start_location'] , 'end' : step['end_location'], 'distance' : step['distance']['value'], 'distance_text' : step['distance']['text'] }
+			l = {'start' : step['start_location'] , 'end' : step['end_location'], 'distance' : step['distance']['value'], 'distance_text' : step['distance']['text'], 'deltaTs':step['duration']['value'] }
 			steps.append(l)
 	for step in steps:
 			myangle = (angleFromCoordinate(step['start'] ,step['end']))
-			azm_start = (azimuthAngle(step['start']))
-			azm_end = (azimuthAngle(step['end']))
-
+			azm_start = (azimuthAngle(step['start'],trvTs))
+			azm_end = (azimuthAngle(step['end'],trvTs+step['deltaTs']))  #prettyUseLessInCalculations-joLoda
+			trvTs+=step['deltaTs']
 			sun_pos =  whereissun(myangle, azm_start)
 			distance_text = step['distance_text']
 			distance = step['distance']
@@ -95,14 +93,15 @@ def find_sun_pos(source,destination):
 				dist_right+=distance
 
 			if dist_left>dist_right:
-				a='sun will mostly be on: left'
+				a='<h3>sun will mostly be on: <i>left</i></h3>'
 			else:
-				a='sun will mostly be on: right'
-			d = {'myangle' : str(myangle) , 'azm_start': str(azm_start), 'azm_end': str(azm_end), 'distance': distance, 'sun_pos': sun_pos, 'distance_text' : distance_text}
+				a='<h3>sun will mostly be on: <i>right</i></h3>'
+			d = "{ 'sun_pos': <b>"+sun_pos+"</b>, 'distance_text': "+distance_text+", 'myangle': "+str(myangle)+", 'azm_start': "+str(azm_start)+", 'azm_end': "+str(azm_end)+", 'distance':" +str(distance)+" }"
 			data.append(str(d))
-	data.append('total left distance:'+str(dist_left))
-	data.append('total right distance:'+str(dist_right))
-	data.append(a)
+	data.insert(0,'total left distance: '+str(dist_left)+'m')
+	data.insert(0,'total right distance: '+str(dist_right)+'m')
+	data.insert(0,a)
 	return data
 
-find_sun_pos('Himalaya Zircon, Motera, Ahmedabad, Gujarat 382424','Dada Harir Vav, Haripura, Asarwa, Ahmedabad, Gujarat 380016')
+
+#print(find_sun_pos('Himalaya Zircon, Motera, Ahmedabad, Gujarat 382424','Dada Harir Vav, Haripura, Asarwa, Ahmedabad, Gujarat 380016'))
