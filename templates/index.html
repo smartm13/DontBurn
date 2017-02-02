@@ -53,14 +53,16 @@
         border-color: #4d90fe;
       }
     </style>
-  
+
   <script>
       function initMap() {
       bindInput('str1');
-      bindInput('str2');
+      bindInput('str2',clicked);
       }
-      function bindInput(id){
-        new google.maps.places.Autocomplete(document.getElementById(id));
+      function bindInput(id,callback=function(){}){
+        (new google.maps.places.Autocomplete(document.getElementById(id)))
+        .addListener('place_changed',callback);
+
       }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAM2XwoXmiJ4gHOndI0SSIDnutGmuZXkT8&libraries=places&callback=initMap"
@@ -69,4 +71,4 @@
 	<hr><hr>
 	<p id="output">	</p>
 	</body>
-	</html>	
+	</html>
