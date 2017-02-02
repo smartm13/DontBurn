@@ -22,50 +22,8 @@ def res():
 @app.route('/sun')
 def sunhello():
     """Return a friendly HTTP greeting."""
+    return render_template('index.html')
     return """
-	<html>
-	<title>SunPosition</title>
-	<body>
-	<h1>SunPosition</h1>
-	<!--form action=""-->
-	<label for="str1">source</label>
-	<input id="str1" name="par1" type="text"/>
-	<hr>
-	<label for="str2">destination</label>
-	<input id="str2" name="par2" type="text" onkeydown="if (event.keyCode == 13) document.getElementById('clickme').click()"/>
-	<hr>
-	<button id="clickme">Calculate</button>
-	<a href="/help">help</a>
-	<a href="https://docs.google.com/forms/d/1E3Ey4U1_ev1cnD5p29y8r5zLyITA9G2_F2vxUWVMbU4/viewform">feedback</a>
-
-
-	<script>
-	document.getElementById("clickme").addEventListener("click", clicked);
-	function clicked()
-	{
-    document.getElementById("output").innerHTML = "Please Wait.";
-	var a=document.getElementById("str1").value;
-	var b=document.getElementById("str2").value;
-	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function() {
-    if (xhttp.readyState == 4 && xhttp.status == 200) {
-      document.getElementById("output").innerHTML = xhttp.responseText;
-    }
-    if (xhttp.readyState == 4 && xhttp.status != 200) {
-          document.getElementById("output").innerHTML = "Failed";
-
-    }
-  };
-  xhttp.open("GET", "lai_lidho?par1=".concat(a).concat("&par2=").concat(b), true);
-  xhttp.send();
-}
-
-	</script>
-
-	<hr><hr>
-	<p id="output">	</p>
-	</body>
-	</html>
 	"""
 
 @app.route('/help')
