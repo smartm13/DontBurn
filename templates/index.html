@@ -1,3 +1,5 @@
+
+
 	<html>
 	<title>SunPosition</title>
 	<body>
@@ -19,8 +21,8 @@
 	function clicked()
 	{
     document.getElementById("output").innerHTML = "Please Wait.";
-	var a=document.getElementById("str1").value;
-	var b=document.getElementById("str2").value;
+	var a=encodeURIComponent(document.getElementById("str1").value);
+	var b=encodeURIComponent(document.getElementById("str2").value);
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -36,8 +38,35 @@
 }
 
 	</script>
+      <style>
+      input[type=text] {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+      }
+      input[type=text]:focus {
+        border-color: #4d90fe;
+      }
+    </style>
+  
+  <script>
+      function initMap() {
+      bindInput('str1');
+      bindInput('str2');
+      }
+      function bindInput(id){
+        new google.maps.places.Autocomplete(document.getElementById(id));
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAM2XwoXmiJ4gHOndI0SSIDnutGmuZXkT8&libraries=places&callback=initMap"
+        async defer></script>
 
 	<hr><hr>
 	<p id="output">	</p>
 	</body>
-	</html>
+	</html>	
