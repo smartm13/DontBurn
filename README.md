@@ -1,3 +1,7 @@
+Deprecated, Please refer latest one:
+https://smartm13.github.io/sunWA.html
+
+
 # DontBurn
 helps you decide which side to sit while travelling to get minimal damage from sun!
 
